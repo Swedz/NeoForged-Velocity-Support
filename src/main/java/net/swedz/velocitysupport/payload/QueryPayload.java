@@ -2,10 +2,10 @@ package net.swedz.velocitysupport.payload;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.login.custom.CustomQueryPayload;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public record QueryPayload(
-		Identifier id,
+		ResourceLocation id,
 		FriendlyByteBuf buffer
 ) implements CustomQueryPayload
 {

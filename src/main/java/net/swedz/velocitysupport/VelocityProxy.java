@@ -1,12 +1,12 @@
 package net.swedz.velocitysupport;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.net.InetAddresses;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.ProfilePublicKey;
 
 import javax.crypto.Mac;
@@ -23,12 +23,12 @@ import java.util.UUID;
  */
 public final class VelocityProxy
 {
-	private static final int        SUPPORTED_FORWARDING_VERSION     = 1;
-	public static final  int        MODERN_FORWARDING_WITH_KEY       = 2;
-	public static final  int        MODERN_FORWARDING_WITH_KEY_V2    = 3;
-	public static final  int        MODERN_LAZY_SESSION              = 4;
-	public static final  byte       MAX_SUPPORTED_FORWARDING_VERSION = MODERN_LAZY_SESSION;
-	public static final  Identifier PLAYER_INFO_CHANNEL              = Identifier.fromNamespaceAndPath("velocity", "player_info");
+	private static final int              SUPPORTED_FORWARDING_VERSION     = 1;
+	public static final  int              MODERN_FORWARDING_WITH_KEY       = 2;
+	public static final  int              MODERN_FORWARDING_WITH_KEY_V2    = 3;
+	public static final  int              MODERN_LAZY_SESSION              = 4;
+	public static final  byte             MAX_SUPPORTED_FORWARDING_VERSION = MODERN_LAZY_SESSION;
+	public static final  ResourceLocation PLAYER_INFO_CHANNEL              = ResourceLocation.fromNamespaceAndPath("velocity", "player_info");
 	
 	public static boolean checkIntegrity(FriendlyByteBuf buf)
 	{
@@ -63,10 +63,12 @@ public final class VelocityProxy
 	
 	public static GameProfile createProfile(FriendlyByteBuf buf)
 	{
-		return new GameProfile(buf.readUUID(), buf.readUtf(16), readProperties(buf));
+		var profile = new GameProfile(buf.readUUID(), buf.readUtf(16));
+		profile.getProperties().putAll(readProperties(buf));
+		return profile;
 	}
 	
-	private static PropertyMap readProperties(FriendlyByteBuf buf)
+	private static Multimap<String, Property> readProperties(FriendlyByteBuf buf)
 	{
 		ImmutableMultimap.Builder<String, Property> propertiesBuilder = ImmutableMultimap.builder();
 		int properties = buf.readVarInt();
@@ -77,8 +79,7 @@ public final class VelocityProxy
 			String signature = buf.readBoolean() ? buf.readUtf(Short.MAX_VALUE) : null;
 			propertiesBuilder.put(name, new Property(name, value, signature));
 		}
-		var propertiesMap = propertiesBuilder.build();
-		return new PropertyMap(propertiesMap);
+		return propertiesBuilder.build();
 	}
 	
 	public static ProfilePublicKey.Data readForwardedKey(FriendlyByteBuf buf)

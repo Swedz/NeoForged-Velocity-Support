@@ -1,6 +1,6 @@
 package net.swedz.velocitysupport;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -26,9 +26,9 @@ public final class VelocitySupport
 	public static final String ID   = "velocity_support";
 	public static final String NAME = "Velocity Support";
 	
-	public static Identifier id(String path)
+	public static ResourceLocation id(String path)
 	{
-		return Identifier.fromNamespaceAndPath(ID, path);
+		return ResourceLocation.fromNamespaceAndPath(ID, path);
 	}
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(NAME);

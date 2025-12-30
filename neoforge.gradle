@@ -1,6 +1,12 @@
 neoForge {
 	version = neoforge_version
 
+	mods {
+		"${mod_id}" {
+			sourceSet sourceSets.main
+		}
+	}
+
 	validateAccessTransformers = true
 	accessTransformers = [
 			"src/main/resources/${mod_id}.accesstransformer.cfg"
@@ -13,6 +19,8 @@ neoForge {
 
 	runs {
 		configureEach {
+			mods = [neoForge.mods."${mod_id}"]
+
 			systemProperty 'forge.logging.markers', 'REGISTRIES'
 
 			systemProperty 'forge.logging.console.level', 'debug'
@@ -27,12 +35,6 @@ neoForge {
 
 			systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
 			programArgument '--nogui'
-		}
-	}
-
-	mods {
-		"${mod_id}" {
-			sourceSet sourceSets.main
 		}
 	}
 }

@@ -63,7 +63,8 @@ public class HandleVelocityModernForwardingMixin
 			method = "handleHello",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V"
+					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V",
+					ordinal = 0
 			),
 			cancellable = true
 	)
@@ -127,13 +128,13 @@ public class HandleVelocityModernForwardingMixin
 				connection.address = new InetSocketAddress(VelocityProxy.readAddress(buf), port);
 				authenticatedProfile = VelocityProxy.createProfile(buf);
 				
-				LOGGER.info("UUID of player {} is {}", authenticatedProfile.name(), authenticatedProfile.id());
+				LOGGER.info("UUID of player {} is {}", authenticatedProfile.getName(), authenticatedProfile.getId());
 				this.startClientVerification(authenticatedProfile);
 			}
 			catch (Exception ex)
 			{
 				this.disconnect(Component.literal("Failed to verify."));
-				VelocitySupport.LOGGER.warn("Failed to verify {}", authenticatedProfile.name(), ex);
+				VelocitySupport.LOGGER.warn("Failed to verify {}", authenticatedProfile.getName(), ex);
 			}
 			finally
 			{
