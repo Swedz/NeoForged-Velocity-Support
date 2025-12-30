@@ -1,37 +1,7 @@
 repositories {
 	mavenLocal()
 	mavenCentral()
-	maven {
-		name "Modmaven"
-		url "https://modmaven.dev"
-		content {
-			// Tesseract
-			includeGroup "net.swedz"
-		}
-	}
-	maven {
-		name = "TerraformersMC"
-		url = "https://maven.terraformersmc.com/releases/"
-		content {
-			// EMI
-			includeGroup "dev.emi"
-		}
-	}
 }
 
 dependencies {
-	jarJar(implementation("io.github.llamalad7:mixinextras-neoforge:${mixinextras_version}")) {
-		version {
-			strictly "[${mixinextras_version},)"
-			prefer mixinextras_version
-		}
-	}
-
-	implementation "net.swedz:tesseract-api-neoforge:${tesseract_version}"
-
-	if (project.runtime_include_emi.toBoolean()) {
-		localImplementation "dev.emi:emi-neoforge:${emi_version}"
-	} else {
-		compileOnly "dev.emi:emi-neoforge:${emi_version}"
-	}
 }

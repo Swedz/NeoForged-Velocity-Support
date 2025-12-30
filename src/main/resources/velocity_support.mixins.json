@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "net.swedz.velocitysupport.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "HandleCustomQueryAnswerPacketMixin",
+        "HandleVelocityModernForwardingMixin",
+        "WrapCommandSerializationMixin"
+    ],
+    "client": [],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

@@ -1,3 +1,3 @@
-# NeoForge Mod Template
+# NeoForged Velocity Support
 
-This is a mod template repository for NeoForge mods.
+Adds support for Velocity's Modern Forwarding in NeoForge.
