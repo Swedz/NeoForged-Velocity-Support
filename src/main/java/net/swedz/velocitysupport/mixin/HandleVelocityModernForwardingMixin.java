@@ -63,8 +63,7 @@ public class HandleVelocityModernForwardingMixin
 			method = "handleHello",
 			at = @At(
 					value = "INVOKE",
-					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V",
-					ordinal = 0
+					target = "Lnet/minecraft/server/network/ServerLoginPacketListenerImpl;startClientVerification(Lcom/mojang/authlib/GameProfile;)V"
 			),
 			cancellable = true
 	)
