@@ -103,14 +103,16 @@ if (System.getenv("CURSEFORGE_API_KEY")) {
 				def relations = project.curseforge_project_relations.split(",")
 				relations.each {
 					def split = it.split(":")
-					def dependency = split[0]
-					def requirementType = split[1]
-					if (requirementType == "required") {
-						requiredDependency dependency
-					} else if (requirementType == "optional") {
-						optionalDependency dependency
-					} else if (requirementType == "incompatibility") {
-						incompatible dependency
+					if (split.length == 2) {
+						def dependency = split[0]
+						def requirementType = split[1]
+						if (requirementType == "required") {
+							requiredDependency dependency
+						} else if (requirementType == "optional") {
+							optionalDependency dependency
+						} else if (requirementType == "incompatibility") {
+							incompatible dependency
+						}
 					}
 				}
 			}
