@@ -100,8 +100,10 @@ static Map<String, String> gatherProjectRelations(String property) {
 	return projectRelations
 }
 
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 if (System.getenv("CURSEFORGE_API_KEY")) {
-	tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+	tasks.register('publishCurseForge', TaskPublishCurseForge).configure {
 		apiToken = System.getenv("CURSEFORGE_API_KEY")
 
 		def mainFile = upload(project.curseforge_project, jar)
