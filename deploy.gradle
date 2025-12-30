@@ -101,42 +101,30 @@ static Map<String, String> gatherProjectRelations(String property) {
 }
 
 if (System.getenv("CURSEFORGE_API_KEY")) {
-	curseforge {
-		apiKey = System.getenv("CURSEFORGE_API_KEY")
+	tasks.register('curseforge', net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+		apiToken = System.getenv("CURSEFORGE_API_KEY")
 
-		project {
-			id = project.curseforge_project
-			releaseType = System.getenv("RELEASE_TYPE")
-			changelogType = "markdown"
-			delegate.changelog = System.getenv("MOD_CHANGELOG_TRIMMED_PUBLISH")
+		def mainFile = upload(project.curseforge_project, jar)
+		mainFile.releaseType = System.getenv("RELEASE_TYPE")
+		mainFile.changelogType = "markdown"
+		mainFile.changelog = System.getenv("MOD_CHANGELOG_TRIMMED_PUBLISH")
 
-			def compatible_minecraft_versions = project.compatible_minecraft_versions.split(",")
-			compatible_minecraft_versions.each { addGameVersion it }
-			addGameVersion "NeoForge"
-			addGameVersion "Java 21"
+		def compatible_minecraft_versions = project.compatible_minecraft_versions.split(",")
+		compatible_minecraft_versions.each { mainFile.addGameVersion(it) }
+		mainFile.addGameVersion("NeoForge")
+		mainFile.addGameVersion("Java 21")
 
-			def projectRelations = gatherProjectRelations(project.curseforge_project_relations)
-			if (!projectRelations.isEmpty()) {
-				relations {
-					projectRelations.each {
-						def dependency = it.getKey()
-						def requirementType = it.getValue()
-						if (requirementType == "required") {
-							requiredDependency dependency
-						} else if (requirementType == "optional") {
-							optionalDependency dependency
-						} else if (requirementType == "incompatibility") {
-							incompatible dependency
-						}
-					}
-				}
+		def projectRelations = gatherProjectRelations(project.curseforge_project_relations)
+		projectRelations.each {
+			def dependency = it.getKey()
+			def requirementType = it.getValue()
+			if (requirementType == "required") {
+				mainFile.addRequirement(dependency)
+			} else if (requirementType == "optional") {
+				mainFile.addOptional(dependency)
+			} else if (requirementType == "incompatibility") {
+				mainFile.addIncompatibility(dependency)
 			}
-
-			mainArtifact(tasks.named("jar").flatMap { it.archiveFile })
-		}
-
-		options {
-			forgeGradleIntegration = false
 		}
 	}
 }
