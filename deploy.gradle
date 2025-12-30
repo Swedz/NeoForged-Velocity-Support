@@ -84,6 +84,22 @@ publishing {
 	}
 }
 
+static Map<String, String> gatherProjectRelations(String property) {
+	Map<String, String> projectRelations = new HashMap<>()
+
+	def relations = property.split(",")
+	relations.each {
+		def split = it.split(":")
+		if (split.length == 2) {
+			def dependency = split[0]
+			def requirementType = split[1]
+			projectRelations.put(dependency, requirementType)
+		}
+	}
+
+	return projectRelations
+}
+
 if (System.getenv("CURSEFORGE_API_KEY")) {
 	curseforge {
 		apiKey = System.getenv("CURSEFORGE_API_KEY")
@@ -99,21 +115,18 @@ if (System.getenv("CURSEFORGE_API_KEY")) {
 			addGameVersion "NeoForge"
 			addGameVersion "Java 21"
 
-			if (!project.curseforge_project_relations.isEmpty()) {
+			def projectRelations = gatherProjectRelations(project.curseforge_project_relations)
+			if (!projectRelations.isEmpty()) {
 				relations {
-					def relations = project.curseforge_project_relations.split(",")
-					relations.each {
-						def split = it.split(":")
-						if (split.length == 2) {
-							def dependency = split[0]
-							def requirementType = split[1]
-							if (requirementType == "required") {
-								requiredDependency dependency
-							} else if (requirementType == "optional") {
-								optionalDependency dependency
-							} else if (requirementType == "incompatibility") {
-								incompatible dependency
-							}
+					projectRelations.each {
+						def dependency = it.getKey()
+						def requirementType = it.getValue()
+						if (requirementType == "required") {
+							requiredDependency dependency
+						} else if (requirementType == "optional") {
+							optionalDependency dependency
+						} else if (requirementType == "incompatibility") {
+							incompatible dependency
 						}
 					}
 				}
@@ -141,18 +154,19 @@ if (System.getenv("MODRINTH_API_KEY")) {
 		gameVersions = project.compatible_minecraft_versions.split(",").collect { it }
 		loaders = ["neoforge"]
 
-		dependencies {
-			def relations = project.modrinth_project_relations.split(",")
-			relations.each {
-				def split = it.split(":")
-				def dependency = split[0]
-				def requirementType = split[1]
-				if (requirementType == "required") {
-					required.project dependency
-				} else if (requirementType == "optional") {
-					optional.project dependency
-				} else if (requirementType == "incompatibility") {
-					incompatible.project dependency
+		def projectRelations = gatherProjectRelations(project.modrinth_project_relations)
+		if (!projectRelations.isEmpty()) {
+			dependencies {
+				projectRelations.each {
+					def dependency = it.getKey()
+					def requirementType = it.getValue()
+					if (requirementType == "required") {
+						required.project dependency
+					} else if (requirementType == "optional") {
+						optional.project dependency
+					} else if (requirementType == "incompatibility") {
+						incompatible.project dependency
+					}
 				}
 			}
 		}
