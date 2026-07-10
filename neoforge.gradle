@@ -6,13 +6,16 @@ neoForge {
 			"src/main/resources/${mod_id}.accesstransformer.cfg"
 	]
 
-	parchment {
-		mappingsVersion = project.parchment_mappings_version
-		minecraftVersion = project.parchment_mappings_minecraft_version
+	mods {
+		"${mod_id}" {
+			sourceSet sourceSets.main
+		}
 	}
 
 	runs {
 		configureEach {
+			loadedMods = [mods."${mod_id}"]
+
 			systemProperty 'forge.logging.markers', 'REGISTRIES'
 
 			systemProperty 'forge.logging.console.level', 'debug'
@@ -27,12 +30,6 @@ neoForge {
 
 			systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
 			programArgument '--nogui'
-		}
-	}
-
-	mods {
-		"${mod_id}" {
-			sourceSet sourceSets.main
 		}
 	}
 }
